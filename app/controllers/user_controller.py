@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from app.schemas import UserRegisterSchema, UsernameSchema
 from app.services import UserService
 from fastapi.responses import JSONResponse
+from app.defaults import INTERNAL_ERROR_MESSAGE
 
 
 user_router = APIRouter(prefix='/users')
@@ -20,14 +21,15 @@ async def create(user: UserRegisterSchema):
     
     except Exception as error:
 
-        raise HTTPException(status_code=500, detail={"errors": "Ocorreu um erro inesperado. Tente novamente mais tarde."})
+        raise HTTPException(status_code=500, detail={"errors": INTERNAL_ERROR_MESSAGE})
     
 
 @user_router.post('/validate-username/')
 async def validate_username(username: UsernameSchema):
 
     try:
-        found_username = await UserService().get_user_by_username(username)
+        print(username.username)
+        found_username = await UserService().get_user_by_username(username.username)
 
         if found_username:
             return JSONResponse(content={"indisponible_username": "O nome de usuário já está em uso"}, status_code=200)
@@ -36,4 +38,4 @@ async def validate_username(username: UsernameSchema):
     except Exception as error:
         print("user_controler_validate_username: ", error)
         
-        raise HTTPException(status_code=500, detail={"errors": "Ocorreu um erro inesperado. Tente novamente mais tarde."})
+        raise HTTPException(status_code=500, detail={"errors": INTERNAL_ERROR_MESSAGE})

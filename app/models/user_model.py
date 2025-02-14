@@ -1,9 +1,9 @@
-from pydantic import BaseModel, Field, conlist
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
 class UserModel(BaseModel):
-    id: Optional[str]                   = Field(default=None, max_length=50)
+    id: Optional[str] 
     name: str                           = Field(min_length=3, max_length=100)
     username: str                       = Field(min_length=3, max_length=50)
     email: str                          = Field(max_length=255)
@@ -20,5 +20,11 @@ class UserModel(BaseModel):
     blockeds: List[str]                 = Field(default=[])
     created_at: datetime                = Field(default_factory=datetime.now)
     updated_at: datetime                = Field(default_factory=datetime.now)
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: v.isoformat()  # Convertendo para string ISO
+        }
+
     
     

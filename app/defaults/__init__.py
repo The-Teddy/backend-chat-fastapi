@@ -1,0 +1,1 @@
+from app.defaults.default_messages import INTERNAL_ERROR_MESSAGE

@@ -8,9 +8,11 @@ app = create_app()
 if __name__ == "__main__":
     import uvicorn
     
-    FLASK_API_HOST = getenv("FLASK_API_HOST")
-    FLASK_API_PORT = getenv('FLASK_API_PORT')
+    FAST_API_HOST = getenv("FAST_API_HOST")
+    FAST_API_PORT = getenv('FAST_API_PORT')
     
+    if not FAST_API_HOST or not FAST_API_PORT:
+        raise RuntimeError("Configure as variáveis de ambiente FAST_API_HOST e FAST_API_PORT corretamente")
     
 
-    uvicorn.run(app, host=FLASK_API_HOST, port=FLASK_API_PORT)
+    uvicorn.run("main:app", host=FAST_API_HOST, port=int(FAST_API_PORT), reload=True, workers=5)

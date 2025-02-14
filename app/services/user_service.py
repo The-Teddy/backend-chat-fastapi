@@ -3,6 +3,7 @@ from app.repositories import UserRepository
 from fastapi import HTTPException
 from pymongo.errors import DuplicateKeyError
 from app.schemas import UserRegisterSchema
+from app.utils.utils import to_iso_format
 
 class UserService:
 
@@ -27,8 +28,17 @@ class UserService:
         except DuplicateKeyError:
             raise HTTPException(status_code=409, detail={"message": "nome de usuário já está em uso."})
     
-    async def get_user_by_username(self, username: str)-> str:
-
+    async def get_user_by_username(self, username: str)-> dict:
         return await self.user_repository.find_user_by_username(username)
+    
+    async def get_user_by_email(self, email: str)-> dict:
+        found_user = await self.user_repository.find_user_by_email(email)
+        found_user['id'] = str(found_user['_id'])
+
+        user = UserModel(**found_user).model_dump()
+        user = to_iso_format(user)
+        return user
+
+
 
 
