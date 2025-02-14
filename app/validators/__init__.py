@@ -1,0 +1,1 @@
+from app.validators.regular_expressions import NAME_REGEX, USERNAME_REGEX, EMAIL_REGEX, PASSWORD_REGEX
