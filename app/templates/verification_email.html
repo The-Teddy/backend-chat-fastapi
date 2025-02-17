@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificação de Conta</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        text-align: center;
+        padding: 20px;
+      }
+      .container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px 0px #ccc;
+        display: inline-block;
+        width: 100%;
+      }
+      .button {
+        display: inline-block;
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-top: 15px;
+      }
+      .button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Confirme seu email</h2>
+      <p>Olá, {{ name }}!</p>
+      <p>Para ativar sua conta, clique no botão abaixo:</p>
+      <a href="{{ verification_url }}" class="button">Verificar Conta</a>
+      <!-- <p>Ou copie e cole o link no seu navegador:</p>
+        <p><strong>{{ verification_url }}</strong></p> -->
+      <p>Se você não solicitou este email, ignore-o.</p>
+      <p>Atenciosamente,<br />Equipe {{ app_name }}</p>
+    </div>
+  </body>
+</html>

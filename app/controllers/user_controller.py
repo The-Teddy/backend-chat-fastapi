@@ -20,6 +20,7 @@ async def create(user: UserRegisterSchema):
         return error
     
     except Exception as error:
+        print(f"create_user_error: {error}")
 
         raise HTTPException(status_code=500, detail={"errors": INTERNAL_ERROR_MESSAGE})
     
@@ -28,7 +29,6 @@ async def create(user: UserRegisterSchema):
 async def validate_username(username: UsernameSchema):
 
     try:
-        print(username.username)
         found_username = await UserService().get_user_by_username(username.username)
 
         if found_username:

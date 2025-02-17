@@ -3,7 +3,7 @@ from typing import Optional, List
 from datetime import datetime
 
 class UserModel(BaseModel):
-    id: Optional[str] 
+    id: Optional[str]                   = None
     name: str                           = Field(min_length=3, max_length=100)
     username: str                       = Field(min_length=3, max_length=50)
     email: str                          = Field(max_length=255)

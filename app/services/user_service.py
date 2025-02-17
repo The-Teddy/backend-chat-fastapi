@@ -20,13 +20,19 @@ class UserService:
                 raise HTTPException(status_code=409, detail={"errors": "O E-mail escolhido já está em uso"})
 
             from app.services import AuthService
-            user_dict['password'] = await AuthService().generate_hash_password(user_dict['password'])
+            from app.services import EmailService
             
+            user_dict['password'] = await AuthService().generate_hash_password(user_dict['password'])
             result = await self.user_repository.insert_user(user_dict)
+
+            await EmailService().send_email("Verificação de e-mail", user_dict['email'], user_dict['name'])
+            
             return str(result.inserted_id)
         
         except DuplicateKeyError:
             raise HTTPException(status_code=409, detail={"message": "nome de usuário já está em uso."})
+       
+
     
     async def get_user_by_username(self, username: str)-> dict:
         return await self.user_repository.find_user_by_username(username)

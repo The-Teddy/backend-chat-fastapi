@@ -12,9 +12,7 @@ async def create_access_token(data: dict, expires_delta: timedelta = None):
     expire  = datetime.now() + (expires_delta or timedelta(minutes=ACESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
 
-    print("passou?")
     jwt_token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-    print("não passou")
     return jwt_token
 

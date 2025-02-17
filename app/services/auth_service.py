@@ -23,8 +23,8 @@ class AuthService:
         if not found_user['is_active']:
             raise HTTPException(status_code=403, detail={"errors": "Usuário inativo"})
         
-        # if not found_user['email_verified']:
-        #     raise HTTPException(status_code=403, detail={"errors": "E-mail não verificado"})
+        if not found_user['email_verified']:
+            raise HTTPException(status_code=403, detail={"errors": "E-mail não verificado"})
 
         if not await self.check_password(found_user['password'], password):
             raise HTTPException(status_code=401, detail={"errors": "Credenciais inválidas"})

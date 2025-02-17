@@ -19,5 +19,11 @@ class UserRepository:
     
     async def find_users(self) -> list[dict]:
         return await mongodb.db.users.find().to_list()
+    
+    async def delete_user_by_id(self, id: str | ObjectId):
+        return await mongodb.db.users.delete_one({"_id": ObjectId(id)})
+
+    async def delete_user_by_email(self, email: str):
+        return await mongodb.db.users.delete_one({"email": email})
 
             
