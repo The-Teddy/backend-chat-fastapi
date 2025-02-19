@@ -2,10 +2,14 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 from app import create_app
 from os import getenv
+from app.validators import check_env_vars
 
 app = create_app()
 
 if __name__ == "__main__":
+    
+    check_env_vars()
+
     import uvicorn
     
     FAST_API_HOST = getenv("FAST_API_HOST")

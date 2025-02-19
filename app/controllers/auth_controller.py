@@ -15,7 +15,8 @@ async def login(user: LoginSchema):
         return JSONResponse(status_code=200, content=authenticated_user)
 
     except HTTPException as error:
-        return error
+        print(f"Error ao fazer login: {error.detail}")
+        raise HTTPException(status_code=error.status_code, detail=error.detail)
     
     except Exception as error:
         print("login_error: ", error)

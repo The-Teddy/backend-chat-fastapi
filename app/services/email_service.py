@@ -1,49 +1,50 @@
 from aiosmtplib import SMTP
-from email.message import EmailMessage
 from os import getenv, path
 from jinja2 import Environment, FileSystemLoader
-from app.utils import create_access_token
-from datetime import timedelta
 from app.repositories import UserRepository
+from app.utils import set_message_to_email
 
 class EmailService:
     
-    user_repositoty = UserRepository()
+    def __init__(self,):
+        from app.repositories import TokenRepository
 
-    async def send_email(self, subject: str, to_email: str, name: str):
+        self.user_repositoty    = UserRepository()
+        self.token_repository   = TokenRepository()
+        self.from_email         = getenv("FROM_EMAIL")
+        self.host_email         = getenv('HOST_EMAIL')
+        self.port_email         = getenv('PORT_EMAIL')
+        self.username_mail      = getenv("USERNAME_MAIL")
+        self.password_mail      = getenv("PASSWORD_MAIL") 
+        self.verification_url   = getenv('VERIFICATION_URL')
+        self.base_dir           = path.dirname(path.abspath(__file__))
+        self.templates_dir      = path.join(self.base_dir, "../templates")
 
-        FROM_EMAIL          = "chatweb@gmail.com"
-        HOST_EMAIL          = getenv('HOST_EMAIL')
-        PORT_EMAIL          = getenv('PORT_EMAIL')
-        USERNAME_MAIL       = getenv("USERNAME_MAIL")
-        PASSWORD_EMAIL      = getenv("PASSWORD_EMAIL")
-        TOKEN               = await create_access_token({"email": to_email},timedelta(hours=1))
-        VERIFICATION_URL    = getenv('VERIFICATION_URL') + TOKEN
-        BASE_DIR            = path.dirname(path.abspath(__file__))
-        TEMPLATES_DIR       = path.join(BASE_DIR, "../templates")
+    async def send_email(self, typeEmail: str, subject: str, to_email: str, user_name: str, token: str, update: bool):
 
-
-        env                 = Environment(loader=FileSystemLoader(TEMPLATES_DIR))
-        template            = env.get_template("verification_email.html") 
-        html_content        = template.render(name=name, verification_url=VERIFICATION_URL, app_name="Chat Web")
-
-        message = EmailMessage()
-        message.set_content(f"Este é um email em HTML, mas seu cliente de email não suporta esse formato. link para verificação: {VERIFICATION_URL}")
-        message["From"] = FROM_EMAIL
-        message['To'] = to_email
-        message['Subject'] = subject
-        message.add_alternative(html_content, subtype="html")
+        
 
         try:
-            smtp = SMTP (hostname=HOST_EMAIL, port=PORT_EMAIL)
+
+            VERIFICATION_URL    = self.verification_url + token
+            env                 = Environment(loader=FileSystemLoader(self.templates_dir))
+            template            = env.get_template("verification_email.html") 
+            html_content        = template.render(typeEmail=typeEmail,name=user_name, verification_url=VERIFICATION_URL, app_name="Chat Web")
+            message             = set_message_to_email(self.from_email, to_email, subject, html_content, VERIFICATION_URL)
+            smtp                = SMTP (hostname=self.host_email, port=self.port_email)
+
             await smtp.connect()
-            await smtp.login(USERNAME_MAIL, PASSWORD_EMAIL)
+            await smtp.login(self.username_mail, self.password_mail)
             await smtp.send_message(message)
+
             print("E-mail enviado com sucesso")
 
         except Exception as error:
             print(f"Erro ao enviar e-mail: {error}")
-            await self.user_repositoty.delete_user_by_email(to_email)
+
+            if not update:
+                await self.user_repositoty.delete_user_by_email(to_email)
+                await self.token_repository.delete_one_by_email(to_email)
 
             raise Exception(error)
             

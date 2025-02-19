@@ -1,2 +1,3 @@
 from app.controllers.user_controller import user_router
 from app.controllers.auth_controller import auth_router
+from app.controllers.email_controller import email_router
