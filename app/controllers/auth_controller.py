@@ -4,7 +4,7 @@ from app.schemas import LoginSchema
 from app.services import AuthService
 from app.defaults.default_messages import INTERNAL_ERROR_MESSAGE
 
-auth_router = APIRouter(prefix="/auth")
+auth_router = APIRouter(prefix="/auth", tags=['auth'])
 
 @auth_router.post('/login')
 async def login(user: LoginSchema):

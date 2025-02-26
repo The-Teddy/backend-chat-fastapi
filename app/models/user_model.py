@@ -4,13 +4,13 @@ from datetime import datetime
 
 class UserModel(BaseModel):
     id: Optional[str]                   = None
-    name: str                           = Field(min_length=3, max_length=100)
-    username: str                       = Field(min_length=3, max_length=50)
+    name: str                           = Field(min_length=3, max_length=30)
+    username: str                       = Field(min_length=3, max_length=25)
     email: str                          = Field(max_length=255)
     password: str                       = Field(max_length=255)
     photo: Optional[str]                = Field(default=None, max_length=255)
     status: Optional[str]               = Field(default=None, max_length=50)
-    bio: Optional[str]                  = Field(default=None, max_length=300)
+    bio: Optional[str]                  = Field(default=None, max_length=200)
     last_login: Optional[datetime]      = None
     email_verified: Optional[datetime]  = None
     is_active: bool                     = True

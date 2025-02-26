@@ -4,6 +4,7 @@ from pymongo.errors import DuplicateKeyError
 from app.schemas import UserRegisterSchema
 from app.utils.utils import to_iso_format
 from datetime import timedelta
+from os import remove, path
 
 class UserService:
 
@@ -69,6 +70,29 @@ class UserService:
             await self.token_service.delete_token_by_email(email)
             return True
         return False
+    
+    async def update_profile_photo_user(self, path_photo: str, id: str)-> dict:
+        try:
+            found_user      = await self.repository.find_user_by_id(id)
+
+            old_path_photo = found_user['photo']
+
+            updated_user    = await self.repository.update_profile_photo(str(path_photo), id)
+            updated_user    = to_iso_format(updated_user)
+
+            if path.exists(old_path_photo):
+                remove(old_path_photo)
+            
+            data = {"photo": updated_user['photo'], "updated_at": updated_user['updated_at']}
+
+            return data
+
+        except Exception as error:
+            print(f"Erro ao trocar de foto no service: {error}")
+            if path.exists(path_photo):
+                remove(path=path_photo)
+            raise Exception(error)
+
         
 
 

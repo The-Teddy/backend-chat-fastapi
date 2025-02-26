@@ -7,7 +7,7 @@ from app.services import TokenService
 from jose import jwt
 from pymongo.errors import DuplicateKeyError
 
-user_router = APIRouter(prefix='/users')
+user_router = APIRouter(prefix='/users', tags=['users'])
 
 @user_router.post('/')
 async def create(user: UserRegisterSchema):      
@@ -46,7 +46,7 @@ async def validate_username(username: UsernameSchema):
 async def verify_email(token: str):
 
     try:
-        user_token = await TokenService().get_user_by_token(token)
+        user_token = await TokenService().get_current_user(token)
         user       = await UserService().get_user_by_email(user_token['email'])
         
         if user['email_verified']:

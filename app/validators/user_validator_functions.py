@@ -5,14 +5,14 @@ from app.validators import USERNAME_REGEX, NAME_REGEX, EMAIL_REGEX, PASSWORD_REG
 def validate_username(username: str)-> str:
 
     if not re.match(USERNAME_REGEX, username):
-        raise ValueError("O nome de usuário deve ter entre 3 e 50 caracteres, sem espaços, contendo apenas letras de A a Z e números.")
+        raise ValueError("O nome de usuário deve ter entre 3 e 25 caracteres, sem espaços, contendo apenas letras de A a Z e números.")
         
     return username
 
 def validate_name(name: str)-> str:
 
     if not re.match(NAME_REGEX, name):
-        raise ValueError("O nome deve ter entre 3 e 100 caracteres e conter apenas letras (incluindo acentuadas) e espaços")
+        raise ValueError("O nome deve ter entre 3 e 30 caracteres e conter apenas letras (incluindo acentuadas) e espaços")
 
     return name
 

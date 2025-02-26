@@ -1,1 +1,1 @@
-from app.utils.utils import to_iso_format, set_message_to_email
+from app.utils.utils import to_iso_format, set_message_to_email, get_time_now

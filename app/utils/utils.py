@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from email.message import EmailMessage
 
 def to_iso_format(data: dict)-> dict:
@@ -20,3 +20,7 @@ def set_message_to_email(from_email: str, to_email: str, subject: str, html_cont
     message.add_alternative(html_content, subtype="html")
 
     return message
+
+def get_time_now()-> datetime:
+
+    return datetime.now(timezone.utc)

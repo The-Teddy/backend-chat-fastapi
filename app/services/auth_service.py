@@ -38,8 +38,8 @@ class AuthService:
         
         
 
+        access_token = await self.token_service.create_access_token({"id": found_user['id'], "name": found_user["name"],"email": found_user["email"], "username": found_user['username']})
         found_user.pop('password')
-        access_token = await self.token_service.create_access_token(found_user)
         found_user.pop("id")
 
         return {"access_token": access_token, "data": found_user}

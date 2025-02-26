@@ -2,6 +2,7 @@ from app.config import mongodb
 from bson import ObjectId
 from typing import Optional
 from datetime import datetime, timezone
+from pymongo import ReturnDocument
 
 class UserRepository:
 
@@ -25,10 +26,18 @@ class UserRepository:
         result = await mongodb.db.users.update_one({"email": email}, {"$set": {"email_verified": datetime.now(timezone.utc)}})
         return result.modified_count > 0
     
-    async def delete_user_by_id(self, id: str | ObjectId):
-        return await mongodb.db.users.delete_one({"_id": ObjectId(id)})
+    async def delete_user_by_id(self, id: ObjectId):
+        result = await mongodb.db.users.delete_one({"_id": ObjectId(id)})
+        return result.deleted_count > 0
 
     async def delete_user_by_email(self, email: str):
-        return await mongodb.db.users.delete_one({"email": email})
+        result = await mongodb.db.users.delete_one({"email": email})
+        return result.deleted_count > 0
+    
+    async def update_profile_photo(self, photo: str, id: str):
+        
+        data = {"photo": photo, "updated_at": datetime.now(timezone.utc)}
+        return await mongodb.db.users.find_one_and_update({"_id": ObjectId(id)}, {"$set": data}, return_document=ReturnDocument.AFTER)
+        
 
             

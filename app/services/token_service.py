@@ -1,10 +1,14 @@
 from app.models import TokenModel
 from app.repositories import TokenRepository
 from datetime import datetime, timedelta, timezone
-from jose import jwt
+from jose import jwt, JWTError
+from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, Security
 from os import getenv
 
 class TokenService:
+    
+    oauth2_scheme  = OAuth2PasswordBearer(tokenUrl="login")
 
 
     def __init__(self,):
@@ -26,12 +30,13 @@ class TokenService:
         to_encode = data.copy()
         expire  = datetime.now(timezone.utc) + (expires_delta or timedelta(minutes=self.expire_minutes))
         to_encode.update({"exp": expire})
-        to_encode.pop('name')
+        
+        if insert:
+            to_encode.pop('name')
+            await self.insert_token_and_email(TokenModel(email=data['email'], token=jwt_token, name=data['name']))
 
         jwt_token = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
 
-        if insert:
-            await self.insert_token_and_email(TokenModel(email=data['email'], token=jwt_token, name=data['name']))
 
 
         return jwt_token
@@ -51,6 +56,17 @@ class TokenService:
     async def delete_token_by_email(self, email: str):
         return await self.repository.delete_one_by_email(email)
 
-    async def get_user_by_token(self,token: str)-> dict:
+    async def get_current_user(self,token: str = Depends(oauth2_scheme))-> dict:
 
-        return jwt.decode(token, self.secret_key, algorithms=self.algorithm)
+        try:
+            user = jwt.decode(token, self.secret_key, algorithms=self.algorithm)
+
+            if not user:
+                raise HTTPException(status_code=401, detail={"errors": "Token inválido!"})
+            
+            return user
+
+
+        except JWTError as error:
+            print(f"Erro ao decodificar token: {error}")
+            raise HTTPException(status_code=401, detail={"errors": "Token inválido!"})
