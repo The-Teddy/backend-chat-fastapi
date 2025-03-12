@@ -31,9 +31,9 @@ async def upload_photo_profile(file: UploadFile = File(...), authenticated_user:
         with file_path.open('wb') as buffer:
             buffer.write(await file.read())
 
-        updated_data = await UserService().update_profile_photo_user(file_path, authenticated_user['id'])
+        updated_user = await UserService().update_profile_photo_user(file_path, authenticated_user['id'])
 
-        return JSONResponse(status_code=200, content={"message": "Foto de perfil atualziada com sucesso!", "data": updated_data})
+        return JSONResponse(status_code=200, content={"message": "Foto de perfil atualziada com sucesso!", "data": updated_user})
     
     except HTTPException as error:
         print(f"Erro ao trocar de foto no controller: {error}")

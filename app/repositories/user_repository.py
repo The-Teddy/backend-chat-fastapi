@@ -26,18 +26,24 @@ class UserRepository:
         result = await mongodb.db.users.update_one({"email": email}, {"$set": {"email_verified": datetime.now(timezone.utc)}})
         return result.modified_count > 0
     
-    async def delete_user_by_id(self, id: ObjectId):
+    async def delete_user_by_id(self, id: ObjectId)-> bool:
         result = await mongodb.db.users.delete_one({"_id": ObjectId(id)})
         return result.deleted_count > 0
 
-    async def delete_user_by_email(self, email: str):
+    async def delete_user_by_email(self, email: str)-> bool:
         result = await mongodb.db.users.delete_one({"email": email})
         return result.deleted_count > 0
     
-    async def update_profile_photo(self, photo: str, id: str):
-        
+    async def update_profile_photo(self, photo: str, id: str)-> dict:
         data = {"photo": photo, "updated_at": datetime.now(timezone.utc)}
         return await mongodb.db.users.find_one_and_update({"_id": ObjectId(id)}, {"$set": data}, return_document=ReturnDocument.AFTER)
-        
+    
+    async def update_name(self, name: str, id: str)-> dict:
+        data = {"name": name, "updated_at": datetime.now(timezone.utc)}
 
-            
+        return await mongodb.db.users.find_one_and_update({"_id": ObjectId(id)}, {"$set": data}, return_document=ReturnDocument.AFTER)
+
+    async def update_bio(self, bio: str, id: str)-> dict:
+        data = {"bio": bio, "updated_at": datetime.now(timezone.utc)}
+
+        return await mongodb.db.users.find_one_and_update({"_id": ObjectId(id)}, {"$set": data}, return_document=ReturnDocument.AFTER)

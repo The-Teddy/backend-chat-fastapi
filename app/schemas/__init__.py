@@ -3,3 +3,5 @@ from app.schemas.user.username_schema import UsernameSchema
 from app.schemas.user.user_response_schema import UserResponseSchema
 from app.schemas.auth.login_schema import LoginSchema
 from app.schemas.email.resent_token import ResendToken
+from app.schemas.user.name_schema import NameSchema
+from app.schemas.user.bio_schema import BioSchema

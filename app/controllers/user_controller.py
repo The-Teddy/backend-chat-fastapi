@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException
-from app.schemas import UserRegisterSchema, UsernameSchema
+from fastapi import APIRouter, HTTPException, Depends
+from app.schemas import UserRegisterSchema, UsernameSchema, NameSchema, BioSchema
 from app.services import UserService
 from fastapi.responses import JSONResponse
 from app.defaults import INTERNAL_ERROR_MESSAGE
@@ -67,4 +67,46 @@ async def verify_email(token: str):
     
     except Exception as error:
         print(f"Erro ao verificar e-mail: {error}")
+        raise HTTPException(status_code=500, detail={"errors": INTERNAL_ERROR_MESSAGE})
+    
+@user_router.put("/update-name/")
+async def update_name(body: NameSchema, authenticated_user: dict = Depends(TokenService().get_current_user)):
+
+    try:
+        updated_user = await UserService().update_name(body.name, authenticated_user['id'])
+        if not updated_user:
+             raise HTTPException(status_code=404, detail={"errors": "Usuário não encontrado"})
+
+        return JSONResponse(status_code=200, content={"message": "Nome atualizado com sucesso!", "data": updated_user})
+    except HTTPException as error:
+        print(error)
+        raise HTTPException(status_code=error.status_code, detail=error.detail)
+    
+    except Exception as error:
+        print(f"Erro ao atualizar nome: {error}")
+        raise HTTPException(status_code=500, detail={"errors": INTERNAL_ERROR_MESSAGE})
+    
+    
+    
+    
+@user_router.put("/update-bio")
+async def update_bio(body: BioSchema, authenticated_user: dict = Depends(TokenService().get_current_user)):
+
+    try:
+        print(body.bio)
+        print(authenticated_user['id'])
+
+        updated_user = await UserService().update_bio(body.bio, authenticated_user['id'])
+
+        if not updated_user:
+            raise HTTPException(status_code=404, detail={"errors": "Usuário não encontrado"})
+
+        return JSONResponse(status_code=200, content={"message": "Bio Atualizada com sucesso", "data": updated_user})
+
+    except HTTPException as error:
+        print(error)
+        raise HTTPException(status_code=error.status_code, detail=error.detail)
+    
+    except Exception as error:
+        print(error)
         raise HTTPException(status_code=500, detail={"errors": INTERNAL_ERROR_MESSAGE})

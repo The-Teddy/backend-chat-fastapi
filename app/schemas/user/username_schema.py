@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from app.validators.user_validator_functions import validate_username
+from app.validators import validate_username
 
 class UsernameSchema(BaseModel):
 
